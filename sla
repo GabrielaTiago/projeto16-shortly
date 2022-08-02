@@ -1,0 +1,26 @@
+CREATE TABLE users (
+	"id" SERIAL PRIMARY KEY NOT NULL,
+	"name" VARCHAR(50) NOT NULL,
+	"email" VARCHAR(50) NOT NULL UNIQUE,
+	"password" VARCHAR(16) NOT NULL,
+	"confirmPassword" VARCHAR(16) NOT NULL
+);
+
+CREATE TABLE urls (
+	"id" SERIAL PRIMARY KEY NOT NULL,
+	"shortUrl" TEXT NOT NULL,
+	"url" TEXT NOT NULL
+);
+
+
+CREATE TABLE "usersUrls" (
+	"id" SERIAL PRIMARY KEY NOT NULL,
+	"userId" INT,
+	"urlId" INT,
+	"shortUrlId" INT,
+	"linksCount" integer NOT NULL DEFAULT '0',
+	"visitCount" integer NOT NULL DEFAULT '0',
+	FOREIGN KEY ("userId") REFERENCES "users"("id"),
+	FOREIGN KEY ("urlId") REFERENCES "urls"("id"),
+	FOREIGN KEY ("shortUrlId") REFERENCES "urls"("id")
+);
