@@ -1,6 +1,7 @@
 import { connection } from "../database/postgres.js";
 import bcrypt from "bcrypt";
 
+
 async function signUpUsers(req, res) {
   const { name, email, password } = req.body;
 
