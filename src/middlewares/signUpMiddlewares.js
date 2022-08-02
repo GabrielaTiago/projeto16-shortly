@@ -1,7 +1,7 @@
-import { signUnSchema } from "../schemas/authSchema.js";
+import { signUpSchema } from "../schemas/authSchema.js";
 
 function signUpMiddleware(req, res, next) {
-  const validation = signUnSchema.validate(req.body, { abortEarly: true });
+  const validation = signUpSchema.validate(req.body, { abortEarly: true });
 
   if (validation.error) return res.status(422).send(validation.error.details);
 
