@@ -15,11 +15,12 @@ async function signInUsers(req, res) {
     
     if (rowCount === 0) return res.sendStatus(404);
     
+    const id = user[0].id;
     const validEmail = user[0].email;
     const validPassword = bcrypt.compareSync(password, user[0].password);
 
     if (validEmail && validPassword) {
-      const token = jwt.sign({ email, password }, process.env.JWT_KEY, { expiresIn: "1d" });
+      const token = jwt.sign({ id, email, password }, process.env.JWT_KEY, { expiresIn: "1d" });
 
       res.status(200).send({
         message: "Authentication Success",

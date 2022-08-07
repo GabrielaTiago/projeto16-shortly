@@ -3,10 +3,9 @@ import { nanoid } from "nanoid/non-secure";
 
 async function createShortUrl(req, res) {
   const { url } = req.body;
+  const userId  = res.locals.id;
+  const shortUrl = nanoid(10);
 
-  const shortUrl = nanoid(15);
-
-  console.log(shortUrl);
   try {
     const { rowCount } = await connection.query(
       'SELECT * FROM urls WHERE "shortUrl" = $1',
@@ -16,9 +15,9 @@ async function createShortUrl(req, res) {
     if (rowCount === 1) return res.sendStatus(409);
 
     await connection.query(
-      `INSERT INTO urls ("shortUrl", url)
-         VALUES ($1, $2)`,
-      [shortUrl, url]
+      `INSERT INTO urls ("shortUrl", url, "userId")
+         VALUES ($1, $2, $3)`,
+      [shortUrl, url, userId]
     );
 
     res.status(201).send({shortUrl: shortUrl});
