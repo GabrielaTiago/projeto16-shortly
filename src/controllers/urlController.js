@@ -28,4 +28,17 @@ async function createShortUrl(req, res) {
   }
 }
 
-export { createShortUrl };
+async function getUrlsById (req, res) {
+    const { id } = req.params;
+  
+    const { rows: userUrls, rowCount }  = await connection.query(
+      `SELECT id, "shortUrl", url FROM urls WHERE "userId" = $1`,
+      [id]
+    );
+
+    if (rowCount === 0) return res.sendStatus(404);
+  
+    res.status(200).send(userUrls);
+}
+
+export { createShortUrl, getUrlsById };
