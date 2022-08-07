@@ -7,13 +7,6 @@ async function createShortUrl(req, res) {
   const shortUrl = nanoid(10);
 
   try {
-    const { rowCount } = await connection.query(
-      'SELECT * FROM urls WHERE "shortUrl" = $1',
-      [shortUrl]
-    );
-
-    if (rowCount === 1) return res.sendStatus(409);
-
     await connection.query(
       `INSERT INTO urls ("shortUrl", url, "userId")
          VALUES ($1, $2, $3)`,
@@ -41,4 +34,33 @@ async function getUrlsById (req, res) {
     res.status(200).send(userUrls);
 }
 
-export { createShortUrl, getUrlsById };
+async function redirectToShortUrl (req, res) {
+  const { shortUrl } = req.params;
+  
+  const { rows: macthUrl, rowCount } = await connection.query(
+        'SELECT * FROM urls WHERE "shortUrl" = $1',
+        [shortUrl]
+    );
+  
+    if (rowCount === 0) return res.sendStatus(404);
+    
+    const defaultUrl = macthUrl[0].url;
+    const addOneView = macthUrl[0].visitCount + 1;
+    
+    try {
+        await connection.query(
+            `UPDATE urls "visitCount" SET "visitCount" = $1
+            WHERE "shortUrl" = $2
+            `,
+            [addOneView, shortUrl]
+        );
+
+    } catch (error) {
+        console.error(error);
+        res.sendStatus(500);
+    }
+
+    res.redirect(defaultUrl);
+}
+
+export { createShortUrl, getUrlsById, redirectToShortUrl };
