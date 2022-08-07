@@ -63,4 +63,18 @@ async function redirectToShortUrl (req, res) {
     res.redirect(defaultUrl);
 }
 
-export { createShortUrl, getUrlsById, redirectToShortUrl };
+async function deleteShortUrl (req, res) {
+  const { id } = req.params;
+
+  const { rowCount }  = await connection.query(
+    `DELETE FROM urls
+     WHERE id = $1`,
+    [id]
+  );
+
+  if (rowCount === 0) return res.sendStatus(404);
+
+  res.sendStatus(204);
+}
+
+export { createShortUrl, getUrlsById, redirectToShortUrl, deleteShortUrl };
