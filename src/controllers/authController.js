@@ -37,7 +37,7 @@ async function signUpUsers(req, res) {
   const { name, email, password } = req.body;
 
   try {
-    const { rowCount } = checksIfEmailExists(email);
+    const { rowCount } = await checksIfEmailExists(email);
 
     if (rowCount === 1) return res.sendStatus(409);
 
