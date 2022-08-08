@@ -76,7 +76,7 @@ CREATE TABLE public.users (
     id integer NOT NULL,
     name character varying(50) NOT NULL,
     email character varying(50) NOT NULL,
-    password character varying(16) NOT NULL,
+    password text NOT NULL,
     "createdAt" timestamp without time zone DEFAULT now() NOT NULL
 );
 
@@ -208,4 +208,3 @@ GRANT ALL ON LANGUAGE plpgsql TO vbnvsslmpjhkzj;
 --
 -- PostgreSQL database dump complete
 --
-

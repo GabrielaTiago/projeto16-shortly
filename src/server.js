@@ -16,6 +16,6 @@ server.use(urlsRoutes);
 server.use(userRoutes);
 server.use(rankingRoutes);
 
-server.listen(process.env.PORT, () => {
+server.listen(process.env.PORT || 5002, () => {
   console.log(`The server is running on port: ${process.env.PORT}`);
 });
