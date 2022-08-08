@@ -23,44 +23,50 @@ async function createShortUrl(req, res) {
 
 async function getUrlsById (req, res) {
     const { id } = req.params;
-  
-    const { rows: userUrls, rowCount }  = await connection.query(
-      `SELECT id, "shortUrl", url FROM urls WHERE "userId" = $1`,
-      [id]
-    );
 
-    if (rowCount === 0) return res.sendStatus(404);
+    try {
+      const { rows: userUrls, rowCount }  = await connection.query(
+        `SELECT id, "shortUrl", url FROM urls WHERE "userId" = $1`,
+        [id]
+      );
   
-    res.status(200).send(userUrls);
+      if (rowCount === 0) return res.sendStatus(404);
+    
+      res.status(200).send(userUrls);
+
+    } catch (error) {
+      console.error(error);
+      res.sendStatus(500);
+    }
 }
 
 async function redirectToShortUrl (req, res) {
   const { shortUrl } = req.params;
   
-  const { rows: macthUrl, rowCount } = await connection.query(
-        'SELECT * FROM urls WHERE "shortUrl" = $1',
-        [shortUrl]
-    );
-  
-    if (rowCount === 0) return res.sendStatus(404);
+  try {
+    const { rows: macthUrl, rowCount } = await connection.query(
+          'SELECT * FROM urls WHERE "shortUrl" = $1',
+          [shortUrl]
+      );
     
-    const defaultUrl = macthUrl[0].url;
-    const addOneView = macthUrl[0].visitCount + 1;
+      if (rowCount === 0) return res.sendStatus(404);
+      
+      const defaultUrl = macthUrl[0].url;
+      const addOneView = macthUrl[0].visitCount + 1;
     
-    try {
-        await connection.query(
-            `UPDATE urls "visitCount" SET "visitCount" = $1
-            WHERE "shortUrl" = $2
-            `,
-            [addOneView, shortUrl]
-        );
+      await connection.query(
+          `UPDATE urls "visitCount" SET "visitCount" = $1
+          WHERE "shortUrl" = $2
+          `,
+          [addOneView, shortUrl]
+      );
+      
+      res.redirect(defaultUrl);
 
     } catch (error) {
         console.error(error);
         res.sendStatus(500);
     }
-
-    res.redirect(defaultUrl);
 }
 
 async function deleteShortUrl (req, res) {
